@@ -18,4 +18,10 @@ export default {
   cloudinary_api_secret: process.env.CLOUDINARY_API_SECRET,
   sender_email: process.env.SENDER_EMAIL,
   sender_app_password: process.env.SENDER_APP_PASS,
+  payment_url: process.env.PAYMENT_URL,
+  payment_verify_url: process.env.PAYMENT_VERIFY_URL,
+  store_id: process.env.STORE_ID,
+  signature_key: process.env.SIGNATURE_KEY,
+  live_url_server: process.env.LIVE_URL_SERVER,
+  client_live_url_page: process.env.CLIENT_LIVE_URL_PAGE,
 };

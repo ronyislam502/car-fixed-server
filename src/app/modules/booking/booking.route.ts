@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.post(
   "/create-booking",
-  auth(USER_ROLE.USER),
+  //   auth(USER_ROLE.USER),
   BookingControllers.createBooking
 );
 

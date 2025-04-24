@@ -8,6 +8,8 @@ import { Slot } from "../slot/slot.model";
 import { Booking } from "./booking.model";
 import QueryBuilder from "../../builder/queryBuilder";
 import { search } from "./booking.const";
+import { TPayment } from "../payment/payment.interface";
+import { initiatePayment } from "../payment/payment.utils";
 
 const createBookingIntoDB = async (payload: TBooking) => {
   try {
@@ -59,26 +61,15 @@ const createBookingIntoDB = async (payload: TBooking) => {
 
     await booking.save();
 
-    // const paymentData: TPayment = {
-    //   transactionId,
-    //   user: customer,
-    //   grandAmount,
-    // };
+    const paymentData: TPayment = {
+      transactionId,
+      user: customer?._id,
+      grandAmount,
+    };
 
-    // const payment = await initiatePayment(paymentData);
+    const payment = await initiatePayment(paymentData);
 
-    const slotBooingUpdate = await Slot.findByIdAndUpdate(payload.slot, {
-      isBooked: "booked",
-    });
-
-    if (!slotBooingUpdate) {
-      throw new AppError(
-        httpStatus.BAD_REQUEST,
-        "slot not booked at this time"
-      );
-    }
-    return booking;
-    // return payment;
+    return payment;
   } catch (error: any) {
     throw new AppError(
       httpStatus.FORBIDDEN,
