@@ -1,10 +1,13 @@
 import { Model } from "mongoose";
+import { CATEGORY } from "./service.const";
 
 export type TService = {
-  name: string;
+  title: string;
   description: string;
   price: number;
   duration: number;
+  image: string;
+  category: keyof typeof CATEGORY;
   isDeleted: boolean;
 };
 

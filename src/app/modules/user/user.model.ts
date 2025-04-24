@@ -2,6 +2,7 @@ import { Schema, model } from "mongoose";
 import bcrypt from "bcrypt";
 import { TUser, UserModel } from "./user.interface";
 import config from "../../config";
+import { USER_ROLE, USER_STATUS } from "./user.const";
 
 const userSchema = new Schema<TUser, UserModel>(
   {
@@ -12,9 +13,18 @@ const userSchema = new Schema<TUser, UserModel>(
     email: {
       type: String,
       required: true,
-      unique: true,
+      //validate email
+      match: [
+        /^([\w-.]+@([\w-]+\.)+[\w-]{2,4})?$/,
+        "Please fill a valid email address",
+      ],
     },
     password: {
+      type: String,
+      required: true,
+      select: 0,
+    },
+    avatar: {
       type: String,
       required: true,
     },
@@ -24,10 +34,17 @@ const userSchema = new Schema<TUser, UserModel>(
     },
     role: {
       type: String,
-      enum: {
-        values: ["admin", "user"],
-      },
+      enum: Object.keys(USER_ROLE),
+      default: USER_ROLE.USER,
       required: true,
+    },
+    status: {
+      type: String,
+      enum: Object.keys(USER_STATUS),
+      default: USER_STATUS.ACTIVE,
+    },
+    passwordChangedAt: {
+      type: Date,
     },
     address: {
       type: String,
@@ -60,7 +77,7 @@ userSchema.post("save", function (doc, next) {
 });
 
 userSchema.statics.isUserExistsByEmail = async function (email: string) {
-  return await this.findOne({ email });
+  return await this.findOne({ email }).select("+password");
 };
 
 userSchema.statics.isPasswordMatched = async function (
@@ -68,6 +85,15 @@ userSchema.statics.isPasswordMatched = async function (
   hashedPassword
 ) {
   return await bcrypt.compare(plainTextPassword, hashedPassword);
+};
+
+userSchema.statics.isJWTIssuedBeforePasswordChanged = function (
+  passwordChangedTimestamp: number,
+  jwtIssuedTimestamp: number
+) {
+  const passwordChangedTime =
+    new Date(passwordChangedTimestamp).getTime() / 1000;
+  return passwordChangedTime > jwtIssuedTimestamp;
 };
 
 export const User = model<TUser, UserModel>("User", userSchema);

@@ -5,8 +5,18 @@ import { USER_ROLE } from "../user/user.const";
 
 const router = express.Router();
 
-router.post("/", auth(USER_ROLE.user), BookingControllers.createBooking);
+router.post(
+  "/create-booking",
+  auth(USER_ROLE.USER),
+  BookingControllers.createBooking
+);
 
-router.get("/", auth(USER_ROLE.admin), BookingControllers.getAllBookings);
+router.get("/", auth(USER_ROLE.ADMIN), BookingControllers.getAllBookings);
+
+router.get(
+  "/user/:email",
+  auth(USER_ROLE.USER),
+  BookingControllers.customerBooking
+);
 
 export const BookingRoutes = router;

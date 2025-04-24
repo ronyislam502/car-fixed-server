@@ -7,6 +7,7 @@ import { Slot } from "./slot.model";
 import { generateSlots } from "./slot.utilities";
 import { Types } from "mongoose";
 import QueryBuilder from "../../builder/queryBuilder";
+import { searchField } from "./slot.const";
 
 const createSlotIntoDB = async (payload: TSlot) => {
   const isService = await Service.findById(payload.service);
@@ -39,14 +40,21 @@ const createSlotIntoDB = async (payload: TSlot) => {
   return result;
 };
 
-const getAllSlotsFromDB = async () => {
-  const result = await Slot.find().populate("service");
-  return result;
+const getAllSlotsFromDB = async (query: Record<string, unknown>) => {
+  const querySlot = new QueryBuilder(Slot.find().populate("service"), query)
+    .search(searchField)
+    .filter()
+    .sort()
+    .fields()
+    .paginate();
+
+  const meta = await querySlot.countTotal();
+  const data = await querySlot.modelQuery;
+
+  return { meta, data };
 };
 
 const getAvailableSlotsFromDB = async (query: Record<string, unknown>) => {
-  const searchField = ["name", "date", "service", "serviceId"];
-
   const slotQuery = new QueryBuilder(
     Slot.find({ isBooked: { $ne: "booked" } }).populate("service"),
     query
@@ -57,9 +65,10 @@ const getAvailableSlotsFromDB = async (query: Record<string, unknown>) => {
     .paginate()
     .fields();
 
-  const result = await slotQuery.modelQuery;
+  const meta = await slotQuery.countTotal();
+  const data = await slotQuery.modelQuery;
 
-  return result;
+  return { meta, data };
 };
 
 export const SlotServices = {

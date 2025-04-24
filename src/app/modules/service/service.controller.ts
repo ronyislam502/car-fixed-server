@@ -2,9 +2,13 @@ import httpStatus from "http-status";
 import catchAsync from "../../utilities/catchAsync";
 import sendResponse from "../../utilities/sendResponse";
 import { ServiceServices } from "./service.service";
+import { TImageFile } from "../../interface/image.interface";
 
 const createService = catchAsync(async (req, res) => {
-  const result = await ServiceServices.createServiceIntoDB(req.body);
+  const result = await ServiceServices.createServiceIntoDB(
+    req.file as TImageFile,
+    req.body
+  );
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -15,13 +19,14 @@ const createService = catchAsync(async (req, res) => {
 });
 
 const getAllServices = catchAsync(async (req, res) => {
-  const result = await ServiceServices.getAllServiceFromDB();
+  const services = await ServiceServices.getAllServiceFromDB(req.query);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: "Services retrieved successfully",
-    data: result,
+    meta: services.meta,
+    data: services.data,
   });
 });
 
@@ -39,7 +44,11 @@ const getSingleService = catchAsync(async (req, res) => {
 
 const updateService = catchAsync(async (req, res) => {
   const { id } = req.params;
-  const result = await ServiceServices.updateServiceFromDB(id, req.body);
+  const result = await ServiceServices.updateServiceFromDB(
+    id,
+    req.file as TImageFile,
+    req.body
+  );
 
   sendResponse(res, {
     statusCode: httpStatus.OK,

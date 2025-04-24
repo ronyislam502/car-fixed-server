@@ -3,7 +3,7 @@ import { ServiceModel, TService } from "./service.interface";
 
 const ServiceSchema = new Schema<TService, ServiceModel>(
   {
-    name: {
+    title: {
       type: String,
       required: true,
     },
@@ -17,6 +17,10 @@ const ServiceSchema = new Schema<TService, ServiceModel>(
     },
     duration: {
       type: Number,
+      required: true,
+    },
+    image: {
+      type: String,
       required: true,
     },
     isDeleted: {

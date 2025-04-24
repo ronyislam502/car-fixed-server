@@ -22,7 +22,7 @@ const auth = (...requiredRoles: TUserRole[]) => {
       config.access_token_secret as string
     ) as JwtPayload;
 
-    const { role, email } = decoded;
+    const { role, email, iat } = decoded;
 
     // checking if the user is exist
     const user = await User.isUserExistsByEmail(email);
@@ -38,13 +38,20 @@ const auth = (...requiredRoles: TUserRole[]) => {
       throw new AppError(httpStatus.FORBIDDEN, "This user is deleted !");
     }
 
+    if (
+      user.passwordChangedAt &&
+      User.isJWTIssuedBeforePasswordChanged(
+        user.passwordChangedAt,
+        iat as number
+      )
+    ) {
+      throw new AppError(httpStatus.UNAUTHORIZED, "You are not authorized !");
+    }
+
     // checking if the user is blocked
 
     if (requiredRoles && !requiredRoles.includes(role)) {
-      throw new AppError(
-        httpStatus.UNAUTHORIZED,
-        "You are not authorized  hi!"
-      );
+      throw new AppError(httpStatus.UNAUTHORIZED, "You are not authorized!");
     }
 
     req.user = decoded as JwtPayload;

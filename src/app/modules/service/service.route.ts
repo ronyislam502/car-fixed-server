@@ -1,21 +1,40 @@
 import express from "express";
 import { ServiceControllers } from "./service.controller";
-import { SlotControllers } from "../slot/slot.controller";
 import auth from "../../middlewares/auth";
 import { USER_ROLE } from "../user/user.const";
+import { multerUpload } from "../../config/multer.config";
+import { parseBody } from "../../middlewares/bodyParser";
+import { validateRequest } from "../../middlewares/validateRequest";
+import { ServiceValidations } from "./service.validation";
 
 const router = express.Router();
 
-router.post("/", auth(USER_ROLE.admin), ServiceControllers.createService);
+router.post(
+  "/create-service",
+  auth(USER_ROLE.ADMIN),
+  multerUpload.single("image"),
+  parseBody,
+  validateRequest(ServiceValidations.createServiceValidationSchema),
+  ServiceControllers.createService
+);
 
 router.get("/", ServiceControllers.getAllServices);
 
-router.get("/:id", ServiceControllers.getSingleService);
+router.get("/service/:id", ServiceControllers.getSingleService);
 
-router.put("/:id", auth(USER_ROLE.admin), ServiceControllers.updateService);
+router.patch(
+  "/update/:id",
+  auth(USER_ROLE.ADMIN),
+  multerUpload.single("image"),
+  parseBody,
+  validateRequest(ServiceValidations.updateServiceValidationSchema),
+  ServiceControllers.updateService
+);
 
-router.delete("/:id", auth(USER_ROLE.admin), ServiceControllers.deleteService);
-
-router.post("/slots", auth(USER_ROLE.admin), SlotControllers.createSlot);
+router.delete(
+  "/delete/:id",
+  auth(USER_ROLE.ADMIN),
+  ServiceControllers.deleteService
+);
 
 export const ServiceRoutes = router;

@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const createServiceValidationSchema = z.object({
   body: z.object({
-    name: z.string(),
+    title: z.string(),
     description: z.string(),
     price: z.number(),
     duration: z.number(),
@@ -10,7 +10,7 @@ export const createServiceValidationSchema = z.object({
 });
 const updateServiceValidationSchema = z.object({
   body: z.object({
-    name: z.string().optional(),
+    title: z.string().optional(),
     description: z.string().optional(),
     price: z.number().optional(),
     duration: z.number().optional(),

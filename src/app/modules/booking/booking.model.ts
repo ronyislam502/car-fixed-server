@@ -3,7 +3,7 @@ import { TBooking } from "./booking.interface";
 
 const bookingSchema = new Schema<TBooking>(
   {
-    customer: {
+    user: {
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
@@ -47,6 +47,28 @@ const bookingSchema = new Schema<TBooking>(
       required: true,
     },
     registrationPlate: {
+      type: String,
+      required: true,
+    },
+    tax: {
+      type: Number,
+      required: true,
+    },
+    grandAmount: {
+      type: Number,
+      required: true,
+    },
+    status: {
+      type: String,
+      enum: ["Pending", "Completed", "Cancelled"],
+      default: "Pending",
+    },
+    paymentStatus: {
+      type: String,
+      enum: ["Pending", "Paid", "Failed"],
+      default: "Pending",
+    },
+    transactionId: {
       type: String,
       required: true,
     },

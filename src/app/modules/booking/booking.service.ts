@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import httpStatus from "http-status";
 import AppError from "../../errors/AppError";
 import { User } from "../user/user.model";
@@ -5,62 +6,134 @@ import { TBooking } from "./booking.interface";
 import { Service } from "../service/service.model";
 import { Slot } from "../slot/slot.model";
 import { Booking } from "./booking.model";
+import QueryBuilder from "../../builder/queryBuilder";
+import { search } from "./booking.const";
 
 const createBookingIntoDB = async (payload: TBooking) => {
-  const customer = await User.findById(payload.customer);
+  try {
+    const customer = await User.findById(payload?.user);
 
-  if (!customer) {
-    throw new AppError(httpStatus.NOT_FOUND, "User not found");
-  }
+    if (!customer) {
+      throw new AppError(httpStatus.NOT_FOUND, "User not found");
+    }
 
-  const isServiceExists = await Service.findById(payload.service);
-  if (!isServiceExists) {
-    throw new AppError(httpStatus.NOT_FOUND, "service not found");
-  }
+    const isServiceExists = await Service.findById(payload.service);
+    if (!isServiceExists) {
+      throw new AppError(httpStatus.NOT_FOUND, "service not found");
+    }
 
-  const isSlotExists = await Slot.findById(payload.slot);
-  if (!isSlotExists) {
-    throw new AppError(httpStatus.NOT_FOUND, "slot not found");
-  }
+    const isSlotExists = await Slot.findById(payload.slot);
+    if (!isSlotExists) {
+      throw new AppError(httpStatus.NOT_FOUND, "slot not found");
+    }
 
-  const isSlotBooked = isSlotExists.isBooked === "booked";
+    const isSlotBooked = isSlotExists.isBooked === "booked";
 
-  if (isSlotBooked) {
+    if (isSlotBooked) {
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        "slot not available at this time"
+      );
+    }
+
+    const tax = parseFloat((isServiceExists.price * 0.1).toFixed(2));
+    const grandAmount = parseFloat((isServiceExists.price + tax).toFixed(2));
+
+    const transactionId = `TXN-${Date.now()}`;
+
+    const booking = new Booking({
+      user: customer,
+      service: isServiceExists,
+      slot: isSlotExists,
+      vehicleType: payload.vehicleType,
+      vehicleBrand: payload.vehicleBrand,
+      vehicleModel: payload.vehicleModel,
+      manufacturingYear: payload.manufacturingYear,
+      registrationPlate: payload.registrationPlate,
+      tax,
+      grandAmount,
+      status: "Pending",
+      paymentStatus: "Pending",
+      transactionId,
+    });
+
+    await booking.save();
+
+    // const paymentData: TPayment = {
+    //   transactionId,
+    //   user: customer,
+    //   grandAmount,
+    // };
+
+    // const payment = await initiatePayment(paymentData);
+
+    const slotBooingUpdate = await Slot.findByIdAndUpdate(payload.slot, {
+      isBooked: "booked",
+    });
+
+    if (!slotBooingUpdate) {
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        "slot not booked at this time"
+      );
+    }
+    return booking;
+    // return payment;
+  } catch (error: any) {
     throw new AppError(
-      httpStatus.BAD_REQUEST,
-      "slot not available at this time"
+      httpStatus.FORBIDDEN,
+      `Order creation failed: ${error?.message}`
     );
   }
+};
 
-  const result = await Booking.create(payload);
+const getAllBookingsFromDB = async (query: Record<string, unknown>) => {
+  const bookingQuery = new QueryBuilder(
+    Booking.find()
+      .populate("user", "name email address phone")
+      .populate("service", "title duration price")
+      .populate("slot"),
+    query
+  )
+    .search(search)
+    .filter()
+    .fields()
+    .sort()
+    .paginate();
 
-  const slotBooingUpdate = await Slot.findByIdAndUpdate(payload.slot, {
-    isBooked: "booked",
-  });
+  const meta = await bookingQuery.countTotal();
+  const data = await bookingQuery.modelQuery;
 
-  if (!slotBooingUpdate) {
-    throw new AppError(httpStatus.BAD_REQUEST, "slot not booked at this time");
+  return { meta, data };
+};
+
+const getCustomerBookingFromDB = async (
+  email: string,
+  query: Record<string, unknown>
+) => {
+  const user = await User.find({ email });
+
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, "user not found");
   }
 
-  return result;
-};
+  const orderQuery = new QueryBuilder(
+    Booking.find({ user })
+      .populate("user", "name phone address email")
+      .populate("service", "title duration price")
+      .populate("slot"),
+    query
+  )
+    .search(search)
+    .filter()
+    .fields()
+    .sort()
+    .paginate();
 
-const getAllBookingsFromDB = async () => {
-  const result = await Booking.find()
-    .populate("customer")
-    .populate("service")
-    .populate("slot");
+  const meta = await orderQuery.countTotal();
+  const data = await orderQuery.modelQuery;
 
-  return result;
-};
-
-const getCustomerBookingFromDB = async (email: string) => {
-  const result = await Booking.findOne({ email })
-    .populate("customer")
-    .populate("service")
-    .populate("slot");
-
-  return result;
+  return { meta, data };
 };
 
 export const BookingServices = {

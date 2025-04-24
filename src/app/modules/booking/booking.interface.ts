@@ -13,7 +13,7 @@ export type TVehicleType =
   | "tractor";
 
 export type TBooking = {
-  customer: Types.ObjectId;
+  user: Types.ObjectId;
   service: Types.ObjectId;
   slot: Types.ObjectId;
   vehicleType: TVehicleType;
@@ -21,4 +21,9 @@ export type TBooking = {
   vehicleModel: string;
   manufacturingYear: number;
   registrationPlate: string;
+  tax: number;
+  grandAmount: number;
+  status: "Pending" | "Completed" | "Cancelled";
+  paymentStatus: "Pending" | "Paid" | "Failed";
+  transactionId: string;
 };
