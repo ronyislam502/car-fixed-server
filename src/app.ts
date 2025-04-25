@@ -14,7 +14,7 @@ app.use(cors());
 app.use("/api", router);
 
 const getController = (req: Request, res: Response) => {
-  res.send("Car-wash app");
+  res.send("Car-Fixed app");
 };
 
 app.get("/", getController);
