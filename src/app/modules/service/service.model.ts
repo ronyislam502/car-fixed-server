@@ -1,5 +1,6 @@
 import { model, Schema } from "mongoose";
 import { ServiceModel, TService } from "./service.interface";
+import { CATEGORY } from "./service.const";
 
 const ServiceSchema = new Schema<TService, ServiceModel>(
   {
@@ -22,6 +23,10 @@ const ServiceSchema = new Schema<TService, ServiceModel>(
     image: {
       type: String,
       required: true,
+    },
+    category: {
+      type: String,
+      enum: Object.keys(CATEGORY),
     },
     isDeleted: {
       type: Boolean,

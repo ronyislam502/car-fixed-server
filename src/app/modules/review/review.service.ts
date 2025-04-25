@@ -53,9 +53,14 @@ const getAllReviewsFromDB = async (query: Record<string, unknown>) => {
   const meta = await reviewQuery.countTotal();
   const data = await reviewQuery.modelQuery;
 
+  const totalRatings = data?.reduce((sum, review) => sum + review.rating, 0);
+  const averageRating =
+    data.length > 0 ? (totalRatings / data.length).toFixed(2) : "0.00";
+
   return {
     meta,
     data,
+    averageRating,
   };
 };
 

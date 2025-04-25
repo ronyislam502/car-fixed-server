@@ -7,8 +7,9 @@ import { verifyPayment } from "./payment.utils";
 const confirmPaymentIntoDB = async (transactionId: string, status: string) => {
   const verifiedRes = await verifyPayment(transactionId);
 
-  if (verifiedRes && verifiedRes.pay_status === "successful") {
+  if (verifiedRes && verifiedRes.pay_status === "Successful") {
     const booking = (await Booking.findOne({ transactionId })) as TBooking;
+    // console.log("book", booking);
     const slotId = booking.slot;
     const slot = await Slot.findById(slotId);
     if (slot) {

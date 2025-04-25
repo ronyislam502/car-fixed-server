@@ -7,15 +7,17 @@ const router = express.Router();
 
 router.post(
   "/create-booking",
-  //   auth(USER_ROLE.USER),
+  auth(USER_ROLE.USER),
   BookingControllers.createBooking
 );
+
+router.get("/popular-services", BookingControllers.popularServices);
 
 router.get("/", auth(USER_ROLE.ADMIN), BookingControllers.getAllBookings);
 
 router.get(
   "/user/:email",
-  auth(USER_ROLE.USER),
+  auth(USER_ROLE.USER, USER_ROLE.ADMIN),
   BookingControllers.customerBooking
 );
 
