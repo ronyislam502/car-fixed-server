@@ -29,7 +29,6 @@ const bookingSchema = new Schema<TBooking>(
         "bus",
         "electricVehicle",
         "hybridVehicle",
-        "bicycle",
         "tractor",
       ],
       required: true,

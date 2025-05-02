@@ -1,4 +1,4 @@
-export const serviceSearchableFields = ["name", "description"];
+export const serviceSearchableFields = ["title", "description"];
 
 export const CATEGORY = {
   Maintain: "Maintain",

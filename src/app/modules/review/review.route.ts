@@ -22,4 +22,6 @@ router.patch(
 
 router.get("/", ReviewControllers.getAllReviews);
 
+router.get("/service/:id", ReviewControllers.getSingleServiceReviews);
+
 export const ReviewRoutes = router;

@@ -9,7 +9,6 @@ export type TVehicleType =
   | "bus"
   | "electricVehicle"
   | "hybridVehicle"
-  | "bicycle"
   | "tractor";
 
 export type TBooking = {

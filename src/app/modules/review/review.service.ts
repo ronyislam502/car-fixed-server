@@ -61,6 +61,7 @@ const getAllReviewsFromDB = async (query: Record<string, unknown>) => {
     meta,
     data,
     averageRating,
+    totalRatings,
   };
 };
 
@@ -101,8 +102,39 @@ const updateReviewFromDB = async (id: string, payload: Partial<TReview>) => {
   return result;
 };
 
+const getSingleServiceReviewsFromDB = async (
+  id: string,
+  query: Record<string, unknown>
+) => {
+  // const data = await Review.find({ service: id })
+  //   .populate("user", "name email")
+  //   .populate("service", "title");
+
+  const queryServiceReviews = new QueryBuilder(
+    Review.find({ service: id })
+      .populate("user", "name email")
+      .populate("service", "title"),
+    query
+  ).paginate();
+
+  const meta = await queryServiceReviews.countTotal();
+  const data = await queryServiceReviews.modelQuery;
+
+  const totalRatings = data?.reduce((sum, review) => sum + review.rating, 0);
+  const averageRating =
+    data.length > 0 ? (totalRatings / data.length).toFixed(2) : "0.00";
+
+  return {
+    meta,
+    data,
+    averageRating,
+    totalRatings,
+  };
+};
+
 export const ReviewServices = {
   createReviewIntoDB,
   getAllReviewsFromDB,
   updateReviewFromDB,
+  getSingleServiceReviewsFromDB,
 };

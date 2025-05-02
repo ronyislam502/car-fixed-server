@@ -20,10 +20,13 @@ const ServiceSchema = new Schema<TService, ServiceModel>(
       type: Number,
       required: true,
     },
-    image: {
-      type: String,
-      required: true,
-    },
+    image: [
+      {
+        type: String,
+        required: [true, "images is required"],
+        default: "",
+      },
+    ],
     category: {
       type: String,
       enum: Object.keys(CATEGORY),

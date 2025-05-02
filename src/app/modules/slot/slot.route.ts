@@ -14,7 +14,11 @@ router.post(
   SlotControllers.createSlot
 );
 
-router.get("/", auth(USER_ROLE.ADMIN), SlotControllers.getAllSlots);
+router.get("/service/:id", SlotControllers.getSlotsByService);
+
+router.get("/", SlotControllers.getAllSlots);
+
+router.get("/slot/:id", SlotControllers.getSingleSlot);
 
 router.get("/availability", SlotControllers.getAvailableSlots);
 

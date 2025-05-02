@@ -3,6 +3,20 @@ interface SlotTime {
   endTime: string;
 }
 
+const twoDigitFormattedNumber = (num: number): string =>
+  num < 10 ? `0${num}` : `${num}`;
+
+const timeToMinutes = (time: string): number => {
+  const [hours, minutes] = time.split(":").map(Number);
+  return hours * 60 + minutes;
+};
+
+const minutesToTime = (minutes: number): string => {
+  const hours = Math.floor(minutes / 60);
+  const mins = minutes % 60;
+  return `${twoDigitFormattedNumber(hours)}:${twoDigitFormattedNumber(mins)}`;
+};
+
 export const generateSlots = (
   startTime: string,
   endTime: string,
@@ -22,17 +36,3 @@ export const generateSlots = (
 
   return slots;
 };
-
-const timeToMinutes = (time: string): number => {
-  const [hours, minutes] = time.split(":").map(Number);
-  return hours * 60 + minutes;
-};
-
-const minutesToTime = (minutes: number): string => {
-  const hours = Math.floor(minutes / 60);
-  const mins = minutes % 60;
-  return `${twoDigitFormattedNumber(hours)}:${twoDigitFormattedNumber(mins)}`;
-};
-
-const twoDigitFormattedNumber = (num: number): string =>
-  num < 10 ? `0${num}` : `${num}`;

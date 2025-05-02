@@ -71,8 +71,21 @@ const getAvailableSlotsFromDB = async (query: Record<string, unknown>) => {
   return { meta, data };
 };
 
+const getSingleSlotFromDb = async (id: string) => {
+  const result = await Slot.findById(id).populate("service");
+
+  return result;
+};
+
+const getServiceSlots = async (id: string) => {
+  return await Slot.find({ service: id, isBooked: { $ne: "booked" } }).populate(
+    "service"
+  );
+};
 export const SlotServices = {
   createSlotIntoDB,
   getAllSlotsFromDB,
   getAvailableSlotsFromDB,
+  getServiceSlots,
+  getSingleSlotFromDb,
 };

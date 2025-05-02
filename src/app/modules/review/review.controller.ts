@@ -37,8 +37,24 @@ const updateReview = catchAsync(async (req, res) => {
   });
 });
 
+const getSingleServiceReviews = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const result = await ReviewServices.getSingleServiceReviewsFromDB(
+    id,
+    req.query
+  );
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: " Slots service retrieved successfully",
+    data: result,
+  });
+});
+
 export const ReviewControllers = {
   createReview,
   getAllReviews,
   updateReview,
+  getSingleServiceReviews,
 };

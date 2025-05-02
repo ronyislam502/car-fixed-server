@@ -1,1 +1,1 @@
-export const searchField = ["name", "date", "service", "serviceId"];
+export const searchField = ["date", "service.title", "serviceId"];

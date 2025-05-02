@@ -40,21 +40,8 @@ const customerBooking = catchAsync(async (req, res) => {
   });
 });
 
-const popularServices = catchAsync(async (req, res) => {
-  const limit = parseInt(req.query.limit as string) || 5;
-  const result = await BookingServices.getPopularServices(limit);
-
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: "Popular services successfully",
-    data: result,
-  });
-});
-
 export const BookingControllers = {
   createBooking,
   getAllBookings,
   customerBooking,
-  popularServices,
 };

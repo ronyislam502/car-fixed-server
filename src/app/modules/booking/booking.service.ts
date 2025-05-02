@@ -111,7 +111,7 @@ const getCustomerBookingFromDB = async (
   const orderQuery = new QueryBuilder(
     Booking.find({ user })
       .populate("user", "name phone address email")
-      .populate("service", "title duration price")
+      .populate("service", "title duration price image")
       .populate("slot"),
     query
   )
@@ -127,47 +127,8 @@ const getCustomerBookingFromDB = async (
   return { meta, data };
 };
 
-const getPopularServices = async (limit = 5) => {
-  const popular = await Booking.aggregate([
-    {
-      $group: {
-        _id: "$service",
-        totalBookings: { $sum: 1 },
-      },
-    },
-    {
-      $sort: { totalBookings: -1 },
-    },
-    {
-      $limit: limit,
-    },
-    {
-      $lookup: {
-        from: "services",
-        localField: "_id",
-        foreignField: "_id",
-        as: "serviceDetails",
-      },
-    },
-    {
-      $unwind: "$serviceDetails",
-    },
-    {
-      $project: {
-        id: 0,
-        serviceId: "$_id",
-        totalBookings: 1,
-        service: "$serviceDetails",
-      },
-    },
-  ]);
-
-  return popular;
-};
-
 export const BookingServices = {
   createBookingIntoDB,
   getAllBookingsFromDB,
   getCustomerBookingFromDB,
-  getPopularServices,
 };

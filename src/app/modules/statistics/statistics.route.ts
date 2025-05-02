@@ -7,4 +7,6 @@ const router = Router();
 
 router.get("/stats", auth(USER_ROLE.ADMIN), StatisticsControllers.statistics);
 
+router.get("/popular-services", StatisticsControllers.popularServices);
+
 export const StatisticsRoutes = router;
