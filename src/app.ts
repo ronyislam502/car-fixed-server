@@ -1,31 +1,33 @@
-import express, { Application, Request, Response } from "express";
-import cookieParser from "cookie-parser";
-import cors from "cors";
-import router from "./app/routes";
-import notFound from "./app/middlewares/notFound";
-import globalErrorHandler from "./app/middlewares/globalErrorHandler";
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
+import express, { Application, Request, Response } from 'express';
+import globalErrorHandler from './app/middlewares/globalErrorhandler';
+import notFound from './app/middlewares/notFound';
+import router from './app/routes';
 
 const app: Application = express();
 
+//parsers
 app.use(express.json());
 app.use(cookieParser());
+
 app.use(
   cors({
-    origin: ["https://car-fixed-client.vercel.app", "http://localhost:5173"],
+    origin: ['https://e-com-store-clinet.vercel.app', 'http://localhost:3000'],
     credentials: true,
-  })
+  }),
 );
 
-app.use("/api", router);
+app.use('/api/v1', router);
 
 const getController = (req: Request, res: Response) => {
-  res.send("Car-Fixed app");
+  res.send('e-com app');
 };
 
-app.get("/", getController);
-app.use(globalErrorHandler);
-app.use(notFound);
+app.get('/', getController);
 
-// console.log(process.cwd());
+app.use(globalErrorHandler);
+
+app.use(notFound);
 
 export default app;

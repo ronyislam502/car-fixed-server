@@ -1,17 +1,15 @@
-import catchAsync from "../../utilities/catchAsync";
-import { PaymentServices } from "./payment.service";
+import { Request, Response } from 'express';
+import { PaymentServices } from './payment.service';
 
-const paymentConfirm = catchAsync(async (req, res) => {
+const confirmPayment = async (req: Request, res: Response) => {
   const { transactionId, status } = req.query;
 
   const result = await PaymentServices.confirmPaymentIntoDB(
     transactionId as string,
-    status as string
+    status as string,
   );
 
   res.send(result);
-});
-
-export const PaymentControllers = {
-  paymentConfirm,
 };
+
+export const PaymentControllers = { confirmPayment };

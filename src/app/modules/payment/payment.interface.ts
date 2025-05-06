@@ -1,7 +1,7 @@
-import { Types } from "mongoose";
+import { Types } from 'mongoose';
 
 export type TPayment = {
-  user: Types.ObjectId;
   grandAmount: number;
   transactionId: string;
+  user: Types.ObjectId;
 };

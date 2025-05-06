@@ -1,27 +1,16 @@
-import { Router } from "express";
-import auth from "../../middlewares/auth";
-import { USER_ROLE } from "../user/user.const";
-import { validateRequest } from "../../middlewares/validateRequest";
-import { ReviewValidations } from "./review.validation";
-import { ReviewControllers } from "./review.controller";
+import express from 'express';
+import { ReviewControllers } from './review.controller';
+import auth from '../../middlewares/auth';
+import { USER_ROLE } from '../User/user.constant';
 
-const router = Router();
+const router = express.Router();
 
 router.post(
-  "/create-review",
-  auth(USER_ROLE.USER),
-  validateRequest(ReviewValidations.createReviewValidationSchema),
-  ReviewControllers.createReview
+  '/create-review',
+  auth(USER_ROLE.admin, USER_ROLE.user),
+  ReviewControllers.createReview,
 );
 
-router.patch(
-  "/update/:id",
-  auth(USER_ROLE.USER),
-  ReviewControllers.updateReview
-);
-
-router.get("/", ReviewControllers.getAllReviews);
-
-router.get("/service/:id", ReviewControllers.getSingleServiceReviews);
+router.get('/', ReviewControllers.getAllReviews);
 
 export const ReviewRoutes = router;

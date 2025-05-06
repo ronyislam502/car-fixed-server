@@ -1,23 +1,13 @@
-import { model, Schema } from "mongoose";
+import { model, Schema } from 'mongoose';
 
-import { TReview } from "./review.interface";
+import { TReview } from './review.interface';
 
 const reviewSchema = new Schema<TReview>(
   {
     user: {
       type: Schema.Types.ObjectId,
       required: true,
-      ref: "User",
-    },
-    booking: {
-      type: Schema.Types.ObjectId,
-      required: true,
-      ref: "Booking",
-    },
-    service: {
-      type: Schema.Types.ObjectId,
-      required: true,
-      ref: "Service",
+      ref: 'User',
     },
     feedback: {
       type: String,
@@ -30,7 +20,7 @@ const reviewSchema = new Schema<TReview>(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
-export const Review = model<TReview>("Review", reviewSchema);
+export const Review = model<TReview>('Review', reviewSchema);

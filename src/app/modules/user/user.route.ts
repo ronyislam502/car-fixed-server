@@ -1,29 +1,33 @@
-import express from "express";
-import { UserControllers } from "./user.controller";
-import auth from "../../middlewares/auth";
-import { USER_ROLE } from "./user.const";
-import { multerUpload } from "../../config/multer.config";
-import { parseBody } from "../../middlewares/bodyParser";
-import { UserValidations } from "./user.validation";
-import { validateRequest } from "../../middlewares/validateRequest";
+import { Router } from 'express';
+import { UserControllers } from './user.controller';
+import validateRequest from '../../middlewares/validateRequest';
+import { UserValidations } from './user.validation';
+import { multerUpload } from '../../config/multer.config';
+import { parseBody } from '../../middlewares/bodyParse';
+import auth from '../../middlewares/auth';
+import { USER_ROLE } from './user.constant';
 
-const router = express.Router();
-
-router.get("/", auth(USER_ROLE.ADMIN), UserControllers.getAllUsers);
+const router = Router();
 
 router.get(
-  "/user/:email",
-  auth(USER_ROLE.ADMIN, USER_ROLE.USER),
-  UserControllers.getSingleUser
+  '/',
+  auth(USER_ROLE.admin, USER_ROLE.user),
+  UserControllers.getAllUsers,
+);
+
+router.get(
+  '/:email',
+  auth(USER_ROLE.admin, USER_ROLE.user),
+  UserControllers.getSingleUser,
 );
 
 router.patch(
-  "/update/:id",
-  auth(USER_ROLE.ADMIN, USER_ROLE.USER),
-  multerUpload.single("avatar"),
+  '/update/:id',
+  auth(USER_ROLE.admin, USER_ROLE.user),
+  multerUpload.single('image'),
   parseBody,
   validateRequest(UserValidations.updateUserValidationSchema),
-  UserControllers.updateUser
+  UserControllers.updateUser,
 );
 
 export const UserRoutes = router;

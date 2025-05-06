@@ -1,44 +1,50 @@
-import express from "express";
-import { UserControllers } from "../user/user.controller";
-import { AuthControllers } from "./auth.controller";
-import { multerUpload } from "../../config/multer.config";
-import { parseBody } from "../../middlewares/bodyParser";
-import {
-  validateRequest,
-  validateRequestCookies,
-} from "../../middlewares/validateRequest";
-import { UserValidations } from "../user/user.validation";
-import { AuthValidations } from "./auth.validation";
-import auth from "../../middlewares/auth";
-import { USER_ROLE } from "../user/user.const";
+import express from 'express';
+import validateRequest from '../../middlewares/validateRequest';
+import { AuthControllers } from './auth.controller';
+import { AuthValidation } from './auth.validation';
+import { multerUpload } from '../../config/multer.config';
+import { parseBody } from '../../middlewares/bodyParse';
+import { UserControllers } from '../User/user.controller';
+import { UserValidations } from '../User/user.validation';
 
 const router = express.Router();
 
 router.post(
-  "/signup",
-  multerUpload.single("avatar"),
+  '/signin',
+  validateRequest(AuthValidation.loginValidationSchema),
+  AuthControllers.loginUser,
+);
+
+router.post(
+  '/signup',
+  multerUpload.single('image'),
   parseBody,
   validateRequest(UserValidations.createUserValidationSchema),
-  UserControllers.createUser
+  UserControllers.createUser,
 );
 
-router.post(
-  "/login",
-  validateRequest(AuthValidations.loginValidationSchema),
-  AuthControllers.loginUser
-);
+// router.post(
+//   '/change-password',
+//   validateRequest(AuthValidation.changePasswordValidationSchema),
+//   AuthControllers.changePassword,
+// );
 
 router.post(
-  "/change-password",
-  auth(USER_ROLE.USER, USER_ROLE.ADMIN),
-  validateRequest(AuthValidations.changePasswordValidationSchema),
-  AuthControllers.changePassword
+  '/refresh-token',
+  validateRequest(AuthValidation.refreshTokenValidationSchema),
+  AuthControllers.refreshToken,
 );
 
-router.post(
-  "/refresh-token",
-  validateRequestCookies(AuthValidations.refreshTokenValidationSchema),
-  AuthControllers.refreshToken
-);
+// router.post(
+//   '/forget-password',
+//   validateRequest(AuthValidation.forgetPasswordValidationSchema),
+//   AuthControllers.forgetPassword,
+// );
+
+// router.post(
+//   '/reset-password',
+//   validateRequest(AuthValidation.forgetPasswordValidationSchema),
+//   AuthControllers.resetPassword,
+// );
 
 export const AuthRoutes = router;

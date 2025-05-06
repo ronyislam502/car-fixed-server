@@ -1,41 +1,21 @@
-# **Instruction**
+### Requirement Analysis
 
-**Step - 1:** Create an `eslint.config.mjs` and copy the code from: 
-<br> 
-[Eslint File](https://github.com/ShafiaChy/Eslint-Config-Setup/blob/main/eslint.config.mjs)
-<br>
+[Link to Requirement Analysis Document](https://docs.google.com/document/d/10mkjS8boCQzW4xpsESyzwCCLJcM3hvLghyD_TeXPBx0/edit?usp=sharing)
 
-*Delete the files `eslintrc` and `.eslintignore`*
+Description: This document outlines the detailed analysis of project requirements.
 
-**Step - 2:** Copy/paste the following lines and paste inside `script` in `package.json` code from given in the package.json
-```
+---
 
-    "lint": "npx eslint src --ignore-pattern .ts",
-    "lint:fix": "npx eslint src --fix",
-    "prettier": "prettier --ignore-path .gitignore --write \"./src/**/*.+(js|ts|json)\"",
-    "prettier:fix": "npx prettier --write src",
+### Entity-Relationship Diagrams
 
-```
+![ER DIAGRAM](./erdiagram.png)
 
-<br>
+Description: This is an updated diagram illustrates the relationships among User, Student, Admin, Faculty, Academic Semester, Academic Faculty, Academic Department , Course , Semester Registration , Offered Couse.
 
-**Step - 3:** Install the `prettier` package
+---
 
-```
-    npm install --save-dev prettier
-```
+![POSTMAN COLLECTION](./postman_collection.json)
 
-<br>
+Description: This is a postman collection of all the API endpoints.Download this , and import it in your postman if you needed.
 
-<br>
-
-*If prettier does not work*, follow step 4:
-
-**Step - 4:** Add the code below to the `settings.json` file:
-
-```
-      "editor.defaultFormatter": "esbenp.prettier-vscode",
-      "editor.formatOnSave": true,
-```
-
-<br>
+---

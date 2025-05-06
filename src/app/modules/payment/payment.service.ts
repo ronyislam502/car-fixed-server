@@ -1,28 +1,17 @@
-import config from "../../config";
-import { TBooking } from "../booking/booking.interface";
-import { Booking } from "../booking/booking.model";
-import { Slot } from "../slot/slot.model";
-import { verifyPayment } from "./payment.utils";
+import config from '../../config';
+import { Order } from '../Order/order.model';
+import { verifyPayment } from './payment.utils';
 
 const confirmPaymentIntoDB = async (transactionId: string, status: string) => {
   const verifiedRes = await verifyPayment(transactionId);
 
-  if (verifiedRes && verifiedRes.pay_status === "Successful") {
-    const booking = (await Booking.findOne({ transactionId })) as TBooking;
-    // console.log("book", booking);
-    const slotId = booking.slot;
-    const slot = await Slot.findById(slotId);
-    if (slot) {
-      await Slot.findByIdAndUpdate(slot, {
-        isBooked: "booked",
-      });
-    }
-    await Booking.findOneAndUpdate(
+  if (verifiedRes && verifiedRes?.pay_status === 'Successful') {
+    await Order.findOneAndUpdate(
+      { transactionId },
       {
-        transactionId,
+        paymentStatus: 'Paid',
       },
-      { paymentStatus: "Paid" },
-      { new: true }
+      { new: true },
     );
   }
 
@@ -66,16 +55,16 @@ const confirmPaymentIntoDB = async (transactionId: string, status: string) => {
           }
           .success-link {
             background-color: #4CAF50;
-          }  
+          }
         </style>
       </head>
       <body>
         <div class="container">
-          <h1 class="${status === "failed" ? "failed" : "success"}">
-            Payment ${status === "failed" ? "Failed" : "Successful"}
+          <h1 class="${status === 'failed' ? 'failed' : 'success'}">
+            Payment ${status === 'failed' ? 'Failed' : 'Successful'}
           </h1>
-          <a href="${config.client_live_url_page}"class="redirect-link ${status === "failed" ? "failed-link" : "success-link"}">
-            ${status === "failed" ? "Retry Payment" : "Explore more"}
+          <a href="${config.client_live_url_page}"class="redirect-link ${status === 'failed' ? 'failed-link' : 'success-link'}">
+            ${status === 'failed' ? 'Retry Payment' : 'Explore more'}
           </a>
         </div>
       </body>

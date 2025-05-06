@@ -1,47 +1,42 @@
-import { Router } from "express";
-import { ServiceRoutes } from "../modules/service/service.route";
-import { SlotRoutes } from "../modules/slot/slot.route";
-import { AuthRoutes } from "../modules/auth/auth.route";
-import { UserRoutes } from "../modules/user/user.route";
-import { BookingRoutes } from "../modules/booking/booking.route";
-import { ReviewRoutes } from "../modules/review/review.route";
-import { PaymentRoutes } from "../modules/payment/payment.route";
-import { StatisticsRoutes } from "../modules/statistics/statistics.route";
+import { Router } from 'express';
+import { UserRoutes } from '../modules/User/user.route';
+import { AuthRoutes } from '../modules/Auth/auth.route';
+import { OrderRoutes } from '../modules/Order/order.route';
+import { ProductRoutes } from '../modules/Product/product.route';
+import { CategoryRoutes } from '../modules/Category/category.route';
+import { PaymentRoutes } from '../modules/Payment/payment.route';
+import { ReviewRoutes } from '../modules/Review/review.route';
 
 const router = Router();
 
 const moduleRoutes = [
   {
-    path: "/auth",
-    route: AuthRoutes,
-  },
-  {
-    path: "/users",
+    path: '/users',
     route: UserRoutes,
   },
   {
-    path: "/services",
-    route: ServiceRoutes,
+    path: '/auth',
+    route: AuthRoutes,
   },
   {
-    path: "/slots",
-    route: SlotRoutes,
+    path: '/categories',
+    route: CategoryRoutes,
   },
   {
-    path: "/bookings",
-    route: BookingRoutes,
+    path: '/products',
+    route: ProductRoutes,
   },
   {
-    path: "/reviews",
-    route: ReviewRoutes,
+    path: '/orders',
+    route: OrderRoutes,
   },
   {
-    path: "/payment",
+    path: '/payment',
     route: PaymentRoutes,
   },
   {
-    path: "/statistics",
-    route: StatisticsRoutes,
+    path: '/reviews',
+    route: ReviewRoutes,
   },
 ];
 

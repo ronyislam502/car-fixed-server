@@ -1,14 +1,14 @@
-import httpStatus from "http-status";
-import QueryBuilder from "../../builder/queryBuilder";
-import AppError from "../../errors/AppError";
-import { TImageFile } from "../../interface/image.interface";
-import { UserSearchableFields } from "./user.const";
-import { TUser } from "./user.interface";
-import { User } from "./user.model";
+import httpStatus from 'http-status';
+import QueryBuilder from '../../builder/QueryBuilder';
+import AppError from '../../errors/AppError';
+import { TImageFile } from '../../interface/image';
+import { userSearchableFields } from './user.constant';
+import { TUser } from './user.interface';
+import { User } from './user.model';
 
-const createUserIntoDB = async (avatar: TImageFile, payload: TUser) => {
-  const file = avatar;
-  payload.avatar = file?.path;
+const createUserIntoDB = async (image: TImageFile, payload: TUser) => {
+  const file = image;
+  payload.profileImg = file?.path;
 
   const result = await User.create(payload);
 
@@ -17,11 +17,11 @@ const createUserIntoDB = async (avatar: TImageFile, payload: TUser) => {
 
 const getAllUsersFromDB = async (query: Record<string, unknown>) => {
   const userQuery = new QueryBuilder(User.find(), query)
-    .fields()
-    .paginate()
-    .sort()
+    .search(userSearchableFields)
     .filter()
-    .search(UserSearchableFields);
+    .sort()
+    .paginate()
+    .fields();
 
   const meta = await userQuery.countTotal();
   const data = await userQuery.modelQuery;
@@ -32,25 +32,25 @@ const getAllUsersFromDB = async (query: Record<string, unknown>) => {
   };
 };
 
-const getSingleUserFromDB = async (email: string) => {
-  const user = await User.find({ email });
+const getSingleUsersFromDB = async (email: string) => {
+  const result = await User.find({ email });
 
-  return user;
+  return result;
 };
 
-const updateUserIntoDB = async (
+const updateUserIntoDb = async (
   id: string,
-  avatar: TImageFile,
-  payload: Partial<TUser>
+  image: TImageFile,
+  payload: Partial<TUser>,
 ) => {
   const existingUser = await User.findById(id);
 
   if (!existingUser) {
-    throw new AppError(httpStatus.NOT_FOUND, "User not found");
+    throw new AppError(httpStatus.NOT_FOUND, 'User not found');
   }
 
-  const file = avatar;
-  payload.avatar = file?.path;
+  const file = image;
+  payload.profileImg = file?.path;
 
   const result = await User.findByIdAndUpdate(id, payload, {
     new: true,
@@ -63,6 +63,6 @@ const updateUserIntoDB = async (
 export const UserServices = {
   createUserIntoDB,
   getAllUsersFromDB,
-  getSingleUserFromDB,
-  updateUserIntoDB,
+  getSingleUsersFromDB,
+  updateUserIntoDb,
 };
